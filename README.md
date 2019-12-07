@@ -4,3 +4,5 @@
 Changelog:
 - 17:30 19/11/2562:
     - Added prototype version made by python
+- 19:03 07/12/2562:
+    - Added prototype version with tkinter GUI via python language
