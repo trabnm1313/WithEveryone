@@ -1,15 +1,27 @@
 from tkinter import *
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
 from openpyxl import load_workbook
-workbook = load_workbook(filename="GG.xlsx")
-sheet = workbook.active
+workbook = load_workbook(filename="styles.xlsx")
+local_sheet = workbook.active
+scope = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+credentials = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+sheet = gspread.authorize(credentials).open_by_url("https://docs.google.com/spreadsheets/d/15tCtq2eCq-eHpejuM82MVq6Y2xCHYXj3febatdVpevg/edit#gid=1403196604")
+worksheet = sheet.get_worksheet(0)
 
 def makeData():
-    for row in range(2, len(sheet["A"])+1):
+    for row in range(2, len(worksheet.col_values(1))+1):
+        if worksheet.row_values(row)[1:] != []:
+            data_x.append(worksheet.row_values(row)[1:])
+def makeStyles():
+    for row in range(1, len(local_sheet["A"])+1):
         datalist = []
-        for col in range(2, len(sheet["1"])+1):
-            datalist.append(sheet[chr(col + 64) + str(row)].value)
-        data_x.append(datalist)
-
+        if type(local_sheet["A" + str(row)].value) != type(None):
+            for col in range(2, len(local_sheet[str(row)])+1):
+                if type(local_sheet[chr(64 + col) + str(row)].value) != type(None):
+                    datalist.append(local_sheet[chr(64 + col) + str(row)].value)
+            styles[local_sheet["A" + str(row)].value] = datalist
+    print(styles)
 
 #Def function but idk why it's here
 def callback(var):
@@ -18,9 +30,10 @@ def callback(var):
 
 #Def ui variable
 ui = Tk()
+ui.title("EIEI")
 
 #Samples data from database
-styles = {"Hair": ["Short", "Long", "Wavy"], "Build": ["Well-Build", "Plump", "Skinny", "Fat"], "Skin": ["Pale", "Tanned", "Black"], "Height": ["High", "Middle", "Short"], "Weight": ["High", "Middle", "Low"]}
+styles = {}
 data_x = []
 
 #Variable
@@ -36,10 +49,14 @@ text2.grid(row=1, column=0, columnspan=8, padx=80)
 def choice(var):
     count = 0
     buttons = {}
+    texts = {}
     text['text'] = "What " + var + " style would you prefer?"
     for index in range(1, len(styles[var])+1):
         buttons[index] = Button(text=index, command=lambda style=styles[var][index-1]: callback(style), width=5, height=2)
         buttons[index].grid(row=index+1, column=0, pady=2)
+    for index in range(1, len(styles[var])+1):
+        texts[index] = Label(text=styles[var][index-1])
+        texts[index].grid(row=index+1, column=1, pady=2)
     ui.wait_variable(intvar)
     for data in data_x:
         brk = 0
@@ -53,10 +70,12 @@ def choice(var):
 
     for button in buttons:
         buttons[button].grid_forget()
+    for txt in texts:
+        texts[txt].grid_forget()
 
 def main():
     makeData()
-    print(data_x)
+    makeStyles()
     ppl = 0
     keep = -1
     startbtn = Button(text="Click here to start", command=lambda: intvar.set(0))
