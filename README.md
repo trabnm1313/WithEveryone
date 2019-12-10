@@ -8,3 +8,6 @@ Changelog:
     - Added prototype version with tkinter GUI via python language
 - 13:57 12/10/2562:
     - Make program able to fetch data from excel
+- 16:28 12/10/2562:
+    - Change from database from local file to google spreadsheet
+    - make program more flexibility
