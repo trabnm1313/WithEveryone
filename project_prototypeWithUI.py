@@ -1,4 +1,15 @@
 from tkinter import *
+from openpyxl import load_workbook
+workbook = load_workbook(filename="GG.xlsx")
+sheet = workbook.active
+
+def makeData():
+    for row in range(2, len(sheet["A"])+1):
+        datalist = []
+        for col in range(2, len(sheet["1"])+1):
+            datalist.append(sheet[chr(col + 64) + str(row)].value)
+        data_x.append(datalist)
+
 
 #Def function but idk why it's here
 def callback(var):
@@ -9,10 +20,10 @@ def callback(var):
 ui = Tk()
 
 #Samples data from database
-styles = {"Hair": ["Short", "Long", "Wavy"], "Build": ["Well-Build", "Plump", "Skinny", "Fat"], "Skin": ["Pale", "Tanned", "Black"]}
-data_x = [[1, 2, 3], [3, 2, 1], [3, 3, 3], [1, 2, 3]]
+styles = {"Hair": ["Short", "Long", "Wavy"], "Build": ["Well-Build", "Plump", "Skinny", "Fat"], "Skin": ["Pale", "Tanned", "Black"], "Height": ["High", "Middle", "Short"], "Weight": ["High", "Middle", "Low"]}
+data_x = []
 
-#Variable 
+#Variable
 data_input = []
 buttons = dict()
 intvar = IntVar()
@@ -27,7 +38,7 @@ def choice(var):
     buttons = {}
     text['text'] = "What " + var + " style would you prefer?"
     for index in range(1, len(styles[var])+1):
-        buttons[index] = Button(text=index, command=lambda num=index: callback(num), width=5, height=2)
+        buttons[index] = Button(text=index, command=lambda style=styles[var][index-1]: callback(style), width=5, height=2)
         buttons[index].grid(row=index+1, column=0, pady=2)
     ui.wait_variable(intvar)
     for data in data_x:
@@ -44,6 +55,8 @@ def choice(var):
         buttons[button].grid_forget()
 
 def main():
+    makeData()
+    print(data_x)
     ppl = 0
     keep = -1
     startbtn = Button(text="Click here to start", command=lambda: intvar.set(0))
