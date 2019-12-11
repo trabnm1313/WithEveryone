@@ -11,3 +11,6 @@ Changelog:
 - 16:28 12/10/2562:
     - Change from database from local file to google spreadsheet
     - make program more flexibility
+- 16:42 12/11/2562:
+    - Fix modules is not import
+    - Remove unused module and added 'package' folder contain a pack of used module
