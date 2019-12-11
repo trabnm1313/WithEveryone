@@ -1,3 +1,5 @@
+import sys
+sys.path.append('C:\\Users\\ASUS\\Desktop\\Project\\WithEveryone\\package')
 from tkinter import *
 from oauth2client.service_account import ServiceAccountCredentials
 import gspread
@@ -21,7 +23,6 @@ def makeStyles():
                 if type(local_sheet[chr(64 + col) + str(row)].value) != type(None):
                     datalist.append(local_sheet[chr(64 + col) + str(row)].value)
             styles[local_sheet["A" + str(row)].value] = datalist
-    print(styles)
 
 #Def function but idk why it's here
 def callback(var):
@@ -61,7 +62,6 @@ def choice(var):
     for data in data_x:
         brk = 0
         for char in range(len(data_input)):
-            print(data[char], data_input[char])
             if data[char] != data_input[char]:
                 brk = 1
         if brk == 0:
@@ -94,6 +94,7 @@ def main():
 
     text['text'] = "Thanks for making surveys."
     print(data_input)
+    print(*data_x, sep="\n")
 
 #Call main() and UI.mainloop()
 main()
