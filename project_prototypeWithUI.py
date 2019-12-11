@@ -1,7 +1,7 @@
 import sys
 import time
 import os
-sys.path.append('C:\\Users\\ASUS\\Desktop\\Project\\WithEveryone\\package')
+sys.path.insert(0,'package')
 from tkinter import *
 from oauth2client.service_account import ServiceAccountCredentials
 import gspread
@@ -14,17 +14,16 @@ sheet = gspread.authorize(credentials).open_by_url("https://docs.google.com/spre
 worksheet = sheet.get_worksheet(0)
 
 def makeData():
-    count_n = 0
-    for row in range(2, len(worksheet.col_values(1))+1):
-        count_n += 1
-        print(count_n)
-        if worksheet.row_values(row)[1:] != []:
-            data_x.append(worksheet.row_values(row)[1:])
+    allData = worksheet.get_all_records()
+    for dataRow in allData:
+        datalist = []
+        for data in dataRow:
+            datalist.append(dataRow[data])
+        if not "" in datalist:
+            data_x.append(datalist[1:])
+
 def makeStyles():
-    count_n = 0
     for row in range(1, len(local_sheet["A"])+1):
-        count_n += 1
-        print(count_n)
         datalist = []
         if type(local_sheet["A" + str(row)].value) != type(None):
             for col in range(2, len(local_sheet[str(row)])+1):
@@ -46,8 +45,8 @@ def btnClicked():
 ui = Tk()
 ui.title("Personality Analysis(EIEI)")
 ui.resizable()
-ui.minsize(500, 350)
-ui.maxsize(500, 1000)
+ui.minsize(475, 100)
+ui.maxsize(475, 100)
 
 #Samples data from database
 styles = {}
@@ -60,9 +59,8 @@ intvar = IntVar()
 text = Label(text="Welcome to personal preference analysis program!.", anchor=CENTER, font=("AngsanaUPC", 18))
 text2 = Label(text="", anchor=CENTER, font=("AngsanaUPC", 18))
 text.grid(row=0, column=0, columnspan=8, padx=80)
-text2.grid(row=1, column=0, columnspan=8, padx=80)
 link = Button(text="Copy quiz link here.", command=btnClicked)
-link.grid(row=15, sticky=S)
+link.grid(row=3, column=3, sticky=S, pady=5)
 
 #Def function and call function
 def choice(var):
@@ -76,6 +74,8 @@ def choice(var):
     for index in range(1, len(styles[var])+1):
         texts[index] = Label(text=styles[var][index-1])
         texts[index].grid(row=index+1, column=1, pady=2)
+    ui.maxsize(ui.winfo_reqwidth(), len(buttons)*70 + (len(buttons)*20))
+    ui.minsize(ui.winfo_reqwidth(), len(buttons)*70 + (len(buttons)*20))
     ui.wait_variable(intvar)
     for data in data_x:
         brk = 0
@@ -97,8 +97,10 @@ def main():
     ppl = 0
     keep = -1
     startbtn = Button(text="Click here to start", command=lambda: intvar.set(0))
-    startbtn.grid(row=2, column=3, padx=80)
+    startbtn.grid(row=2, column=3)
     ui.wait_variable(intvar)
+    ui.maxsize(1000, 1000)
+    text2.grid(row=1, column=0, columnspan=8, padx=80)
     startbtn.grid_forget()
     link.grid_forget()
 
@@ -112,8 +114,6 @@ def main():
 
 
     text['text'] = "Thanks for making surveys."
-    print(data_input)
-    print(*data_x, sep="\n")
 
 #Call main() and UI.mainloop()
 main()
