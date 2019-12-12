@@ -1,30 +1,26 @@
 import sys
+sys.path.insert(0, "package")
 import time
 import os
-sys.path.append('C:\\Users\\ASUS\\Desktop\\Project\\WithEveryone\\package')
 from tkinter import *
-from oauth2client.service_account import ServiceAccountCredentials
-import gspread
 from openpyxl import load_workbook
 workbook = load_workbook(filename="styles.xlsx")
+workbook2 = load_workbook(filename="data.xlsx")
+local_data = workbook2.active
 local_sheet = workbook.active
-scope = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
-credentials = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
-sheet = gspread.authorize(credentials).open_by_url("https://docs.google.com/spreadsheets/d/15tCtq2eCq-eHpejuM82MVq6Y2xCHYXj3febatdVpevg/edit#gid=1403196604")
-worksheet = sheet.get_worksheet(0)
 
 def makeData():
-    count_n = 0
-    for row in range(2, len(worksheet.col_values(1))+1):
-        count_n += 1
-        print(count_n)
-        if worksheet.row_values(row)[1:] != []:
-            data_x.append(worksheet.row_values(row)[1:])
+    for row in range(2, len(local_data["A"])+1):
+        datalist = []
+        for data in local_data[row]:
+            if "" != data.value and not type(None) == type(data.value):
+                datalist.append(data.value)
+        if datalist != [] and len(datalist)-1 == len(local_data["1"])-1:
+            data_x.append(datalist[1:])
+    print(*data_x)
+
 def makeStyles():
-    count_n = 0
     for row in range(1, len(local_sheet["A"])+1):
-        count_n += 1
-        print(count_n)
         datalist = []
         if type(local_sheet["A" + str(row)].value) != type(None):
             for col in range(2, len(local_sheet[str(row)])+1):
@@ -44,10 +40,11 @@ def btnClicked():
 
 #Def ui variable
 ui = Tk()
+ui.config(bg='pink')
 ui.title("Personality Analysis(EIEI)")
 ui.resizable()
-ui.minsize(500, 350)
-ui.maxsize(500, 1000)
+ui.minsize(475, 100)
+ui.maxsize(475, 100)
 
 #Samples data from database
 styles = {}
@@ -57,12 +54,11 @@ data_x = []
 data_input = []
 buttons = dict()
 intvar = IntVar()
-text = Label(text="Welcome to personal preference analysis program!.", anchor=CENTER, font=("AngsanaUPC", 18))
-text2 = Label(text="", anchor=CENTER, font=("AngsanaUPC", 18))
+text = Label(ui, text="Welcome to personal preference analysis program!.", anchor=CENTER, font=("AngsanaUPC", 20), bg='pink')
+text2 = Label(ui, text="", anchor=CENTER, font=("AngsanaUPC", 20), bg='pink')
 text.grid(row=0, column=0, columnspan=8, padx=80)
-text2.grid(row=1, column=0, columnspan=8, padx=80)
-link = Button(text="Copy quiz link here.", command=btnClicked)
-link.grid(row=15, sticky=S)
+link = Button(ui, text="Copy quiz link here.", command=btnClicked, bd=2)
+link.grid(row=3, column=3, sticky=S, pady=5)
 
 #Def function and call function
 def choice(var):
@@ -71,11 +67,13 @@ def choice(var):
     texts = {}
     text['text'] = "What " + var + " style would you prefer?"
     for index in range(1, len(styles[var])+1):
-        buttons[index] = Button(text=index, command=lambda style=styles[var][index-1]: callback(style), width=5, height=2)
+        buttons[index] = Button(ui, text=index, command=lambda style=styles[var][index-1]: callback(style), width=5, height=2)
         buttons[index].grid(row=index+1, column=0, pady=2)
     for index in range(1, len(styles[var])+1):
-        texts[index] = Label(text=styles[var][index-1])
+        texts[index] = Label(ui, text=styles[var][index-1], font=("AngsanaUPC", 18), bg='pink')
         texts[index].grid(row=index+1, column=1, pady=2)
+    ui.maxsize(ui.winfo_reqwidth(), len(buttons)*70 + (len(buttons)*20))
+    ui.minsize(ui.winfo_reqwidth(), len(buttons)*70 + (len(buttons)*20))
     ui.wait_variable(intvar)
     for data in data_x:
         brk = 0
@@ -96,24 +94,29 @@ def main():
     makeStyles()
     ppl = 0
     keep = -1
-    startbtn = Button(text="Click here to start", command=lambda: intvar.set(0))
-    startbtn.grid(row=2, column=3, padx=80)
+    startbtn = Button(ui, text="Click here to start", command=lambda: intvar.set(0), bd=2)
+    startbtn.grid(row=2, column=3)
     ui.wait_variable(intvar)
+    ui.maxsize(1000, 1000)
+    text2.grid(row=1, column=0, columnspan=8, padx=80)
     startbtn.grid_forget()
     link.grid_forget()
 
     for style in styles:
         choice(style)
+    ui.minsize(500, 300)
+    ui.maxsize(500, 300)
+
+    ava = int((data_x.count(data_input)/len(data_x))*100)
 
     if data_x.count(data_input) > 0:
         text2['text'] = "There is " + str(data_x.count(data_input)) + " people match you styles out of " + str(len(data_x)) + "!"
+        Label(text="You're " + str(ava) + "% from all kind of people.", font=("AngsanaUPC", 20), bg='pink').grid(row=4, column=3)
     else:
         text2['text'] = "Sorry, You styles is not match any people in our data."
 
 
     text['text'] = "Thanks for making surveys."
-    print(data_input)
-    print(*data_x, sep="\n")
 
 #Call main() and UI.mainloop()
 main()

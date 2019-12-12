@@ -43,6 +43,7 @@ def btnClicked():
 
 #Def ui variable
 ui = Tk()
+ui.configure(background="pink")
 ui.title("Personality Analysis(EIEI)")
 ui.resizable()
 ui.minsize(475, 100)
@@ -56,10 +57,10 @@ data_x = []
 data_input = []
 buttons = dict()
 intvar = IntVar()
-text = Label(text="Welcome to personal preference analysis program!.", anchor=CENTER, font=("AngsanaUPC", 18))
-text2 = Label(text="", anchor=CENTER, font=("AngsanaUPC", 18))
+text = Label(ui, text="Welcome to personal preference analysis program!.", anchor=CENTER, font=("AngsanaUPC", 20), bg="pink")
+text2 = Label(ui, text="", anchor=CENTER, font=("AngsanaUPC", 20), bg="pink")
 text.grid(row=0, column=0, columnspan=8, padx=80)
-link = Button(text="Copy quiz link here.", command=btnClicked)
+link = Button(ui, text="Copy quiz link here.", command=btnClicked)
 link.grid(row=3, column=3, sticky=S, pady=5)
 
 #Def function and call function
@@ -69,10 +70,10 @@ def choice(var):
     texts = {}
     text['text'] = "What " + var + " style would you prefer?"
     for index in range(1, len(styles[var])+1):
-        buttons[index] = Button(text=index, command=lambda style=styles[var][index-1]: callback(style), width=5, height=2)
+        buttons[index] = Button(ui, text=index, command=lambda style=styles[var][index-1]: callback(style), width=5, height=2)
         buttons[index].grid(row=index+1, column=0, pady=2)
     for index in range(1, len(styles[var])+1):
-        texts[index] = Label(text=styles[var][index-1])
+        texts[index] = Label(ui, text=styles[var][index-1], bg="pink", font=("AngsanaUPC", 18))
         texts[index].grid(row=index+1, column=1, pady=2)
     ui.maxsize(ui.winfo_reqwidth(), len(buttons)*70 + (len(buttons)*20))
     ui.minsize(ui.winfo_reqwidth(), len(buttons)*70 + (len(buttons)*20))
@@ -96,7 +97,7 @@ def main():
     makeStyles()
     ppl = 0
     keep = -1
-    startbtn = Button(text="Click here to start", command=lambda: intvar.set(0))
+    startbtn = Button(ui, text="Click here to start", command=lambda: intvar.set(0))
     startbtn.grid(row=2, column=3)
     ui.wait_variable(intvar)
     ui.maxsize(1000, 1000)
@@ -106,9 +107,14 @@ def main():
 
     for style in styles:
         choice(style)
+    ui.minsize(500, 300)
+    ui.maxsize(500, 300)
+
+    ava = int((data_x.count(data_input)/len(data_x))*100)
 
     if data_x.count(data_input) > 0:
         text2['text'] = "There is " + str(data_x.count(data_input)) + " people match you styles out of " + str(len(data_x)) + "!"
+        Label(text="You're " + str(ava) + "% from all kind of people.", font=("AngsanaUPC", 20), bg='pink').grid(row=4, column=3)
     else:
         text2['text'] = "Sorry, You styles is not match any people in our data."
 
