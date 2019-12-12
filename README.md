@@ -1,6 +1,8 @@
 # WithEveryone
 -- โปรแกรมดูค่าเฉลี่ย บุคลิกและนิสัยคนกลุ่มคนนั้นๆ --
 
+// PLEASE START PROJECT FROM "project.py" or "../project/project.exe"(but WIP) //
+
 Changelog:
 - 17:30 19/11/2562:
     - Added prototype version made by python
@@ -18,3 +20,8 @@ Changelog:
     - Fix program took up 30second+ to startup (for now take up about 2-3 second)
     - Make program window size fixed
     - Faster fetching data from googlesheet progress
+- 15:15 12/12/2562:
+    - Adding project folder which contain project.exe(convert from project.py but it's WIP)
+    - Optimizing code and adding more description to program
+    - Make program more colourful and look more better
+
